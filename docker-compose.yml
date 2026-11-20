@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: jejakmaterial-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jejak
+      POSTGRES_PASSWORD: jejak_dev_password
+      POSTGRES_DB: jejakmaterial
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jejak -d jejakmaterial"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
