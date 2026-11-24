@@ -41,3 +41,12 @@ export const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
   offset: z.coerce.number().int().min(0).default(0),
 });
+
+export const createProductionSchema = z.object({
+  facilityId: z.string().uuid(),
+  runNumber: z.string().min(3).max(100),
+  productName: z.string().min(2).max(200),
+  productionDate: z.string().date(),
+});
+
+export const updateProductionSchema = createProductionSchema.partial();
