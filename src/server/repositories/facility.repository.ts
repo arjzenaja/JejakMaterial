@@ -18,11 +18,13 @@ export async function createFacility(
   return facility;
 }
 
-export async function listFacilities(organizationId: string) {
+export async function listFacilities(organizationId: string, limit = 50, offset = 0) {
   return db
     .select()
     .from(facilities)
-    .where(eq(facilities.organizationId, organizationId));
+    .where(eq(facilities.organizationId, organizationId))
+    .limit(limit)
+    .offset(offset);
 }
 
 export async function getFacilityById(id: string, organizationId: string) {

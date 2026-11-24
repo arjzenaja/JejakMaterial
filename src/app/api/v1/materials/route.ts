@@ -2,7 +2,7 @@ import { getAuthSession } from "@/server/helpers/session";
 import { getActiveMembership } from "@/server/helpers/tenant";
 import { requireRole } from "@/server/permissions";
 import { ok, fail } from "@/server/helpers/response";
-import { createMaterialSchema } from "@/lib/validation";
+import { createMaterialSchema, listQuerySchema } from "@/lib/validation";
 import {
   createMaterial,
   listMaterials,
@@ -13,7 +13,16 @@ export async function GET(request: Request) {
     const session = await getAuthSession(request);
     const membership = await getActiveMembership(session.user.id);
     // VIEWER+ can list
-    const materials = await listMaterials(membership.organizationId);
+    const url = new URL(request.url);
+    const q = listQuerySchema.safeParse({
+      limit: url.searchParams.get("limit") ?? undefined,
+      offset: url.searchParams.get("offset") ?? undefined,
+    });
+    if (!q.success) {
+      return fail("VALIDATION_ERROR", "Invalid query", 400,
+        q.error.issues.map((i) => ({ field: String(i.path[0]), message: i.message })));
+    }
+    const materials = await listMaterials(membership.organizationId, q.data.limit, q.data.offset);
     return ok(materials);
   } catch (e) {
     if (e instanceof Response) return e;
@@ -45,7 +54,7 @@ export async function POST(request: Request) {
       code: parsed.data.code,
       name: parsed.data.name,
       unit: parsed.data.unit,
-      unitCostPerKg: parsed.data.unitCostPerKg.toString(),
+      unitCostPerKg: parsed.data.unitCostPerKg,
     });
     return ok(material, 201);
   } catch (e) {

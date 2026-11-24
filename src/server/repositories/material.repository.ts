@@ -24,7 +24,7 @@ export async function createMaterial(
   return material;
 }
 
-export async function listMaterials(organizationId: string) {
+export async function listMaterials(organizationId: string, limit = 50, offset = 0) {
   return db
     .select()
     .from(materials)
@@ -33,7 +33,9 @@ export async function listMaterials(organizationId: string) {
         eq(materials.organizationId, organizationId),
         eq(materials.isActive, true),
       ),
-    );
+    )
+    .limit(limit)
+    .offset(offset);
 }
 
 export async function getMaterialById(id: string, organizationId: string) {

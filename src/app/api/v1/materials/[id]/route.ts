@@ -2,6 +2,7 @@ import { getAuthSession } from "@/server/helpers/session";
 import { getActiveMembership } from "@/server/helpers/tenant";
 import { requireRole } from "@/server/permissions";
 import { ok, fail } from "@/server/helpers/response";
+import { parseUuid } from "@/server/helpers/params";
 import { updateMaterialSchema } from "@/lib/validation";
 import {
   getMaterialById,
@@ -18,6 +19,7 @@ export async function GET(
     const membership = await getActiveMembership(session.user.id);
     // VIEWER+ can view
     const { id } = await params;
+    if (!parseUuid(id)) return fail("NOT_FOUND", "Material not found", 404);
     const material = await getMaterialById(id, membership.organizationId);
     if (!material) return fail("NOT_FOUND", "Material not found", 404);
     return ok(material);
@@ -37,6 +39,7 @@ export async function PATCH(
     requireRole(membership.role, "STAFF");
 
     const { id } = await params;
+    if (!parseUuid(id)) return fail("NOT_FOUND", "Material not found", 404);
     const body = await request.json().catch(() => null);
     const parsed = updateMaterialSchema.safeParse(body);
     if (!parsed.success) {
@@ -56,7 +59,7 @@ export async function PATCH(
       ...(parsed.data.name && { name: parsed.data.name }),
       ...(parsed.data.unit && { unit: parsed.data.unit }),
       ...(parsed.data.unitCostPerKg !== undefined && {
-        unitCostPerKg: parsed.data.unitCostPerKg.toString(),
+        unitCostPerKg: parsed.data.unitCostPerKg,
       }),
     };
 
@@ -82,6 +85,7 @@ export async function DELETE(
     requireRole(membership.role, "MANAGER");
 
     const { id } = await params;
+    if (!parseUuid(id)) return fail("NOT_FOUND", "Material not found", 404);
     const deactivated = await deactivateMaterial(id, membership.organizationId);
     if (!deactivated)
       return fail("NOT_FOUND", "Material not found or already inactive", 404);

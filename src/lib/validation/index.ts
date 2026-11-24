@@ -26,11 +26,18 @@ export const createFacilitySchema = z.object({
 
 export const updateFacilitySchema = createFacilitySchema.partial();
 
+const decimalString = z.string().regex(/^\d+(\.\d{1,4})?$/, "Must be a non-negative decimal with up to 4 places");
+
 export const createMaterialSchema = z.object({
   code: z.string().min(1).max(50),
   name: z.string().min(1).max(200),
   unit: z.string().max(20).default("kg"),
-  unitCostPerKg: z.coerce.number().nonnegative(),
+  unitCostPerKg: decimalString,
 });
 
 export const updateMaterialSchema = createMaterialSchema.partial();
+
+export const listQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
