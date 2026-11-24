@@ -17,3 +17,20 @@ export const inviteSchema = z.object({
 export const acceptInviteSchema = z.object({
   token: z.string().uuid(),
 });
+
+export const createFacilitySchema = z.object({
+  code: z.string().min(1).max(50),
+  name: z.string().min(1).max(200),
+  location: z.string().optional(),
+});
+
+export const updateFacilitySchema = createFacilitySchema.partial();
+
+export const createMaterialSchema = z.object({
+  code: z.string().min(1).max(50),
+  name: z.string().min(1).max(200),
+  unit: z.string().max(20).default("kg"),
+  unitCostPerKg: z.coerce.number().nonnegative(),
+});
+
+export const updateMaterialSchema = createMaterialSchema.partial();

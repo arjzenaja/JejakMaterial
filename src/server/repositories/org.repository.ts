@@ -2,22 +2,6 @@ import { db } from "@/lib/db";
 import { organizations } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function createOrg(data: {
-  name: string;
-  sector?: string | null;
-  address?: string | null;
-}) {
-  const [org] = await db
-    .insert(organizations)
-    .values({
-      name: data.name,
-      sector: data.sector ?? null,
-      address: data.address ?? null,
-    })
-    .returning();
-  return org;
-}
-
 export async function getOrgById(id: string) {
   return db
     .select()

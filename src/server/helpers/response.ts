@@ -1,5 +1,3 @@
-import type { NextResponse } from "next/server";
-
 type SuccessStatus = 200 | 201 | 204;
 
 export function ok<T>(data: T, status: SuccessStatus = 200) {

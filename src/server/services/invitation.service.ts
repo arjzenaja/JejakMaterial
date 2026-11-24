@@ -57,16 +57,33 @@ export async function createInvitation(
   // shortcut: no email sending, token returned in body for dev; upgrade when email provider added
   const inviteToken = crypto.randomUUID();
 
-  const [row] = await db
-    .insert(memberships)
-    .values({
-      organizationId,
-      userId: targetUser.id,
-      role,
-      invitedBy,
-      inviteToken,
-    })
-    .returning();
+  // Fix: catch unique constraint race
+  try {
+    const [row] = await db
+      .insert(memberships)
+      .values({
+        organizationId,
+        userId: targetUser.id,
+        role,
+        invitedBy,
+        inviteToken,
+      })
+      .returning();
 
-  return { invitation: row, token: inviteToken };
+    return { invitation: row, token: inviteToken };
+  } catch (e) {
+    if (e && typeof e === "object" && "code" in e && e.code === "23505") {
+      throw Response.json(
+        {
+          error: {
+            code: "CONFLICT",
+            message: "User already a member or has a pending invitation",
+            requestId: crypto.randomUUID(),
+          },
+        },
+        { status: 409 },
+      );
+    }
+    throw e;
+  }
 }

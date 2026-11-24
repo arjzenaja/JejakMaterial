@@ -8,6 +8,7 @@ export async function getActiveMembership(userId: string) {
     .select()
     .from(memberships)
     .where(eq(memberships.userId, userId))
+    .orderBy(memberships.createdAt)
     .limit(1)
     .then((rows) => rows[0]);
 

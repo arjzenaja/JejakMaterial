@@ -1,4 +1,5 @@
 import {
+  boolean,
   numeric,
   pgTable,
   timestamp,
@@ -22,6 +23,7 @@ export const materials = pgTable(
       precision: 18,
       scale: 4,
     }).notNull(),
+    isActive: boolean("is_active").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
