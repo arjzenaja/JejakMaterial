@@ -72,3 +72,17 @@ export async function updateProductionRun(
     .returning();
   return updated ?? null;
 }
+
+export async function closeProductionRun(id: string, organizationId: string) {
+  const [updated] = await db
+    .update(productionRuns)
+    .set({ runStatus: "CLOSED" })
+    .where(
+      and(
+        eq(productionRuns.id, id),
+        eq(productionRuns.organizationId, organizationId),
+      ),
+    )
+    .returning();
+  return updated ?? null;
+}
