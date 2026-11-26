@@ -50,3 +50,15 @@ export const createProductionSchema = z.object({
 });
 
 export const updateProductionSchema = createProductionSchema.partial();
+
+export const flowEntrySchema = z.object({
+  materialId: z.string().uuid().nullable().optional(),
+  flowType: z.enum(["INPUT", "PRODUCT", "LOSS", "RETURNED"]),
+  quantityKg: z.coerce.number().positive(),
+  unitCostPerKg: z.coerce.number().nonnegative(),
+  wasteCategory: z.string().max(100).optional(),
+});
+
+export const createFlowsSchema = z.object({
+  entries: z.array(flowEntrySchema).min(1),
+});
