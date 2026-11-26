@@ -39,3 +39,42 @@ export async function getFlowTotalsByRunId(
 
   return rows.map((r) => ({ flowType: r.flowType, total: r.total ?? "0" }));
 }
+
+/**
+ * Aggregated MFCA totals for one run in a single query.
+ * lossCost = sum(quantity_kg * unit_cost_per_kg) for LOSS entries only (material cost, MVP).
+ */
+export async function getMfcaTotalsByRunId(
+  productionRunId: string,
+  organizationId: string,
+): Promise<{
+  inputKg: string;
+  productKg: string;
+  lossKg: string;
+  returnedKg: string;
+  lossCostRaw: string;
+}> {
+  const [row] = await db
+    .select({
+      inputKg: sql<string>`coalesce(sum(${materialFlowEntries.quantityKg}) filter (where ${materialFlowEntries.flowType} = 'INPUT'), 0)::text`,
+      productKg: sql<string>`coalesce(sum(${materialFlowEntries.quantityKg}) filter (where ${materialFlowEntries.flowType} = 'PRODUCT'), 0)::text`,
+      lossKg: sql<string>`coalesce(sum(${materialFlowEntries.quantityKg}) filter (where ${materialFlowEntries.flowType} = 'LOSS'), 0)::text`,
+      returnedKg: sql<string>`coalesce(sum(${materialFlowEntries.quantityKg}) filter (where ${materialFlowEntries.flowType} = 'RETURNED'), 0)::text`,
+      lossCostRaw: sql<string>`coalesce(sum(${materialFlowEntries.quantityKg} * ${materialFlowEntries.unitCostPerKg}) filter (where ${materialFlowEntries.flowType} = 'LOSS'), 0)::text`,
+    })
+    .from(materialFlowEntries)
+    .where(
+      and(
+        eq(materialFlowEntries.productionRunId, productionRunId),
+        eq(materialFlowEntries.organizationId, organizationId),
+      ),
+    );
+
+  return row ?? {
+    inputKg: "0",
+    productKg: "0",
+    lossKg: "0",
+    returnedKg: "0",
+    lossCostRaw: "0",
+  };
+}
