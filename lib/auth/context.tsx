@@ -1,143 +1,140 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User } from '@/types';
-import { authApi } from '../api/endpoints/auth';
+import type { Organization, User } from '@/types';
+import {
+  buildMemberUser,
+  findAccount,
+  makeOrganizationCode,
+  nextEntityId,
+  readAccounts,
+  readSession,
+  writeAccounts,
+  writeSession,
+  type AuthSession,
+} from './mock';
+
+interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
 
 interface AuthContextType {
   user: User | null;
+  organization: Organization | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (payload: RegisterPayload) => Promise<User>;
+  createOrganization: (name: string) => Promise<Organization>;
   logout: () => Promise<void>;
   hasPermission: (permissionCode: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Demo fallback user for smooth UI preview and exploration if backend is disconnected
-const DEMO_ADMIN_USER: User = {
-  id: 1,
-  name: 'Admin Demo',
-  email: 'admin@demo.com',
-  is_active: true,
-  organization_id: 1,
-  permissions: [
-    'dashboard.view',
-    'materials.view',
-    'materials.create',
-    'materials.update',
-    'movements.view',
-    'movements.create',
-    'movements.post',
-    'movements.correct',
-    'production.view',
-    'production.create',
-    'production.update',
-    'production.finalize',
-    'balance.view',
-    'balance.export',
-    'flow.view',
-    'mfca.view',
-    'mfca.run',
-    'mfca.export',
-    'reports.view',
-    'reports.generate',
-    'reports.export',
-    'audit.view',
-    'users.view',
-    'users.create',
-    'users.update',
-    'roles.view',
-    'roles.manage',
-    'settings.view',
-    'settings.manage',
-  ],
-  roles: [
-    {
-      id: 1,
-      name: 'Admin',
-      code: 'admin',
-    },
-  ],
-};
+function applySession(
+  session: AuthSession,
+  setUser: (user: User | null) => void,
+  setOrganization: (organization: Organization | null) => void
+) {
+  setUser(session.user);
+  setOrganization(session.organization);
+  writeSession(session);
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function initAuth() {
-      try {
-        const storedAuth = typeof window !== 'undefined' ? localStorage.getItem('jejak_auth') : null;
-        if (storedAuth) {
-          const parsed = JSON.parse(storedAuth);
-          setUser(parsed);
-          setIsLoading(false);
-          return;
-        }
-
-        const res = await authApi.me();
-        const userData = (res.data as any)?.user || res.data;
-        if (res.success && userData) {
-          setUser(userData as unknown as User);
-        } else {
-          // Default to demo admin for seamless preview experience
-          setUser(DEMO_ADMIN_USER);
-        }
-      } catch {
-        // Fallback to demo admin so app is always interactive
-        setUser(DEMO_ADMIN_USER);
-      } finally {
-        setIsLoading(false);
-      }
+    // TODO: Integrasikan dengan Better Auth & POST /api/v1/organizations
+    const session = readSession();
+    if (session) {
+      setUser(session.user);
+      setOrganization(session.organization);
     }
-
-    initAuth();
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const res = await authApi.login({ email, password });
-      if (res.success && res.data.user) {
-        const loggedUser = res.data.user as unknown as User;
-        setUser(loggedUser);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('jejak_auth', JSON.stringify(loggedUser));
-        }
-      }
-    } catch {
-      // Local check fallback
-      if (email === 'admin@demo.com' && password === 'password') {
-        setUser(DEMO_ADMIN_USER);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('jejak_auth', JSON.stringify(DEMO_ADMIN_USER));
-        }
-      } else {
-        throw new Error('Email atau password tidak valid');
-      }
-    } finally {
-      setIsLoading(false);
+    // TODO: Integrasikan dengan Better Auth & POST /api/v1/organizations
+    const account = findAccount(email);
+    if (!account || account.password !== password) {
+      throw new Error('Email atau kata sandi tidak sesuai. Periksa kembali data Anda.');
     }
+
+    const session: AuthSession = {
+      user: account.user,
+      organization: account.organization,
+    };
+    applySession(session, setUser, setOrganization);
+    return account.user;
+  };
+
+  const register = async ({ name, email, password }: RegisterPayload) => {
+    // TODO: Integrasikan dengan Better Auth & POST /api/v1/organizations
+    const accounts = readAccounts();
+    if (findAccount(email)) {
+      throw new Error('Email ini sudah terdaftar. Masuk dengan akun tersebut atau gunakan email lain.');
+    }
+
+    const userRecord = buildMemberUser(name, email, nextEntityId(accounts));
+    const account = {
+      user: userRecord,
+      password,
+      organization: null,
+    };
+    writeAccounts([...accounts, account]);
+
+    const session: AuthSession = { user: userRecord, organization: null };
+    applySession(session, setUser, setOrganization);
+    return userRecord;
+  };
+
+  const createOrganization = async (name: string) => {
+    // TODO: Integrasikan dengan Better Auth & POST /api/v1/organizations
+    if (!user) {
+      throw new Error('Sesi tidak ditemukan. Masuk kembali untuk membuat organisasi.');
+    }
+
+    const accounts = readAccounts();
+    const organizationRecord: Organization = {
+      id: nextEntityId(accounts),
+      name: name.trim(),
+      code: makeOrganizationCode(name),
+      timezone: 'Asia/Jakarta',
+    };
+    const nextUser: User = { ...user, organization_id: organizationRecord.id };
+
+    writeAccounts(
+      accounts.map((account) =>
+        account.user.id === user.id
+          ? { ...account, user: nextUser, organization: organizationRecord }
+          : account
+      )
+    );
+
+    applySession(
+      { user: nextUser, organization: organizationRecord },
+      setUser,
+      setOrganization
+    );
+    return organizationRecord;
   };
 
   const logout = async () => {
-    try {
-      await authApi.logout();
-    } catch {
-      // Ignore
-    } finally {
-      setUser(null);
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('jejak_auth');
-      }
-    }
+    // TODO: Integrasikan dengan Better Auth & POST /api/v1/organizations
+    setUser(null);
+    setOrganization(null);
+    writeSession(null);
   };
 
   const hasPermission = (permissionCode: string): boolean => {
     if (!user) return false;
-    if (user.roles?.some((r) => r.code === 'admin' || r.name === 'Admin')) return true;
+    if (user.roles?.some((role) => role.code === 'admin' || role.name === 'Admin')) return true;
     return user.permissions?.includes(permissionCode) || false;
   };
 
@@ -145,9 +142,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        organization,
         isLoading,
         isAuthenticated: !!user,
         login,
+        register,
+        createOrganization,
         logout,
         hasPermission,
       }}

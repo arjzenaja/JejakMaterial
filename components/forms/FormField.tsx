@@ -22,10 +22,10 @@ export function FormField({
     <div className={cn('flex flex-col gap-1.5', className)}>
       <label className="text-xs font-semibold text-text-primary">
         {label}
-        {required && <span className="text-rose-500 ml-1">*</span>}
+        {required && <span className="ml-1 text-danger">*</span>}
       </label>
       {children}
-      {error && <span className="text-xs text-rose-600 font-medium">{error}</span>}
+      {error && <span className="text-xs font-medium text-danger">{error}</span>}
       {hint && !error && <span className="text-xs text-text-secondary">{hint}</span>}
     </div>
   );
