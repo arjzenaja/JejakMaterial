@@ -10,7 +10,7 @@ import { SelectField } from '@/components/forms/SelectField';
 import { FormField } from '@/components/forms/FormField';
 import { Modal } from '@/components/feedback/Modal';
 import { useToast } from '@/components/feedback/Toast';
-import { settingsApi } from '@/lib/api/endpoints/settings';
+import { settingsApi } from '@/lib/dummy';
 import { User, Role } from '@/types';
 import { Users, Shield, Sliders, Plus, Edit2, Check, Lock } from 'lucide-react';
 

@@ -1,0 +1,179 @@
+{
+  "movements": [
+    {
+      "id": 1,
+      "movement_number": "MOV-20261101-001",
+      "movement_type": "receipt",
+      "movement_date": "2026-11-01T08:00:00Z",
+      "status": "posted",
+      "reference_type": "PO",
+      "reference_id": null,
+      "created_by": 1,
+      "posted_at": "2026-11-01T08:15:00Z",
+      "lines": [
+        {
+          "id": 1,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": "Minyak nabati murni", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "100.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "from_location": null,
+          "from_location_id": null,
+          "to_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "to_location_id": 1,
+          "unit_cost": "15000.00"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "movement_number": "MOV-20261105-002",
+      "movement_type": "receipt",
+      "movement_date": "2026-11-05T09:30:00Z",
+      "status": "posted",
+      "reference_type": "PO",
+      "reference_id": null,
+      "created_by": 1,
+      "posted_at": "2026-11-05T09:45:00Z",
+      "lines": [
+        {
+          "id": 2,
+          "material": { "id": 2, "code": "BB-002", "name": "Bahan Baku B (Cairan Pelarut)", "description": "Pelarut kimiawi kelas industri", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" }, "organization_id": 1 },
+          "material_id": 2,
+          "quantity": "120.000000",
+          "unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" },
+          "unit_id": 2,
+          "from_location": null,
+          "from_location_id": null,
+          "to_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "to_location_id": 1,
+          "unit_cost": "22000.00"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "movement_number": "MOV-20261110-003",
+      "movement_type": "issue",
+      "movement_date": "2026-11-10T14:00:00Z",
+      "status": "posted",
+      "reference_type": null,
+      "reference_id": null,
+      "created_by": 1,
+      "posted_at": "2026-11-10T14:10:00Z",
+      "lines": [
+        {
+          "id": 3,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": "Minyak nabati murni", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "50.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "from_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "from_location_id": 1,
+          "to_location": { "id": 2, "code": "LP", "name": "Lantai Produksi", "location_type": "production", "is_active": true },
+          "to_location_id": 2,
+          "unit_cost": "15000.00"
+        },
+        {
+          "id": 4,
+          "material": { "id": 2, "code": "BB-002", "name": "Bahan Baku B (Cairan Pelarut)", "description": "Pelarut kimiawi kelas industri", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" }, "organization_id": 1 },
+          "material_id": 2,
+          "quantity": "20.000000",
+          "unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" },
+          "unit_id": 2,
+          "from_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "from_location_id": 1,
+          "to_location": { "id": 2, "code": "LP", "name": "Lantai Produksi", "location_type": "production", "is_active": true },
+          "to_location_id": 2,
+          "unit_cost": "22000.00"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "movement_number": "MOV-20261115-004",
+      "movement_type": "receipt",
+      "movement_date": "2026-11-15T07:30:00Z",
+      "status": "posted",
+      "reference_type": "PO",
+      "reference_id": null,
+      "created_by": 2,
+      "posted_at": "2026-11-15T07:45:00Z",
+      "lines": [
+        {
+          "id": 5,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": "Minyak nabati murni", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "100.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "from_location": null,
+          "from_location_id": null,
+          "to_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "to_location_id": 1,
+          "unit_cost": "15500.00"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "movement_number": "MOV-20261118-005",
+      "movement_type": "issue",
+      "movement_date": "2026-11-18T14:30:00Z",
+      "status": "posted",
+      "reference_type": null,
+      "reference_id": null,
+      "created_by": 2,
+      "posted_at": "2026-11-18T14:35:00Z",
+      "lines": [
+        {
+          "id": 6,
+          "material": { "id": 2, "code": "BB-002", "name": "Bahan Baku B (Cairan Pelarut)", "description": "Pelarut kimiawi kelas industri", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" }, "organization_id": 1 },
+          "material_id": 2,
+          "quantity": "40.000000",
+          "unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" },
+          "unit_id": 2,
+          "from_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "from_location_id": 1,
+          "to_location": { "id": 2, "code": "LP", "name": "Lantai Produksi", "location_type": "production", "is_active": true },
+          "to_location_id": 2,
+          "unit_cost": "22000.00"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "movement_number": "MOV-20261119-006",
+      "movement_type": "receipt",
+      "movement_date": "2026-11-19T08:00:00Z",
+      "status": "draft",
+      "reference_type": "PO",
+      "reference_id": null,
+      "created_by": 1,
+      "posted_at": null,
+      "lines": [
+        {
+          "id": 7,
+          "material": { "id": 5, "code": "BB-003", "name": "Bahan Aditif C (Stabilizer)", "description": "Zat aditif stabilizer", "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 5,
+          "quantity": "25.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "from_location": null,
+          "from_location_id": null,
+          "to_location": { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+          "to_location_id": 1,
+          "unit_cost": "35000.00"
+        }
+      ]
+    }
+  ],
+  "locations": [
+    { "id": 1, "code": "GU", "name": "Gudang Utama", "location_type": "warehouse", "is_active": true },
+    { "id": 2, "code": "LP", "name": "Lantai Produksi", "location_type": "production", "is_active": true },
+    { "id": 3, "code": "GS", "name": "Gudang Sparepart", "location_type": "warehouse", "is_active": true },
+    { "id": 4, "code": "GP", "name": "Gudang Produk Jadi", "location_type": "warehouse", "is_active": true }
+  ]
+}

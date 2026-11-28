@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { DataTable, Column } from '@/components/data-display/DataTable';
 import { StatusBadge } from '@/components/data-display/StatusBadge';
@@ -10,11 +10,11 @@ import { SearchInput } from '@/components/forms/SearchInput';
 import { SelectField } from '@/components/forms/SelectField';
 import { FormField } from '@/components/forms/FormField';
 import { DateRangeFilter } from '@/components/forms/DateRangeFilter';
+import { DatePicker } from '@/components/forms/DatePicker';
 import { Modal } from '@/components/feedback/Modal';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog';
 import { useToast } from '@/components/feedback/Toast';
-import { productionApi } from '@/lib/api/endpoints/production';
-import { materialApi } from '@/lib/api/endpoints/materials';
+import { productionApi, materialApi } from '@/lib/dummy';
 import { ProductionRecord, Material, Unit } from '@/types';
 import { formatDate } from '@/lib/utils';
 import { Plus, Eye, CheckCircle, Trash2, ArrowDownRight, ArrowUpRight } from 'lucide-react';
@@ -86,6 +86,15 @@ const FALLBACK_PRODUCTION: ProductionRecord[] = [
   },
 ];
 
+const DEFAULT_PROCESS_OPTIONS = [
+  { value: 'PROC-A01', label: 'PROC-A01 — Lini Formulasi & Perakitan Utama' },
+  { value: 'PROC-FORMULASI-A', label: 'PROC-FORMULASI-A — Formulasi Bahan Baku' },
+  { value: 'PROC-PACKAGING-B', label: 'PROC-PACKAGING-B — Pengemasan & Finishing' },
+  { value: 'PROC-MIX-01', label: 'PROC-MIX-01 — Pencampuran / Mixing Material' },
+  { value: 'PROC-EXTRUDE-02', label: 'PROC-EXTRUDE-02 — Ekstrusi & Pembentukan' },
+  { value: 'PROC-QC-01', label: 'PROC-QC-01 — Quality Control & Pengujian' },
+];
+
 export default function ProductionManagementPage() {
   const { success, error: toastError } = useToast();
   const [records, setRecords] = useState<ProductionRecord[]>([]);
@@ -128,6 +137,20 @@ export default function ProductionManagementPage() {
       },
     ],
   });
+
+  // Dynamic process code options combined with fallback & recorded processes
+  const processOptions = useMemo(() => {
+    const options = [...DEFAULT_PROCESS_OPTIONS];
+    records.forEach((r) => {
+      if (r.process_code && !options.some((o) => o.value === r.process_code)) {
+        options.push({
+          value: r.process_code,
+          label: `${r.process_code} — Lini Proses Terdaftar`,
+        });
+      }
+    });
+    return options;
+  }, [records]);
 
   const fetchRecords = async () => {
     setIsLoading(true);
@@ -503,194 +526,256 @@ export default function ProductionManagementPage() {
         title="Buat Catatan Produksi Baru"
         description="Catat batch proses manufaktur dengan rincian material input dan hasil output."
         maxWidth="xl"
+        animation="slide-down"
       >
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="Kode Proses / Lini Produksi" required>
-              <Input
-                placeholder="Contoh: PROC-MIX-01"
+        <form onSubmit={handleCreateSubmit} className="space-y-4 animate-slide-down">
+          {/* Process Code & Date Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-3.5 rounded-card bg-canvas/60 border border-border/80 shadow-2xs">
+            <FormField label="Kode Proses / Lini Produksi" required hint="Pilih lini proses manufaktur">
+              <SelectField
+                options={processOptions}
                 value={formData.process_code}
                 onChange={(e) => setFormData({ ...formData, process_code: e.target.value })}
+                placeholder="Pilih kode proses lini..."
                 required
               />
             </FormField>
 
-            <FormField label="Tanggal Produksi" required>
-              <Input
-                type="date"
+            <FormField label="Tanggal Produksi" required hint="Tanggal pelaksanaan batch produksi">
+              <DatePicker
                 value={formData.production_date}
-                onChange={(e) => setFormData({ ...formData, production_date: e.target.value })}
+                onChange={(date) => setFormData({ ...formData, production_date: date })}
+                placeholder="Pilih tanggal produksi..."
                 required
               />
             </FormField>
           </div>
 
           {/* Inputs Array */}
-          <div className="border border-border rounded-card p-3 space-y-2 bg-canvas/30">
+          <div className="border border-border rounded-card p-3.5 space-y-2.5 bg-canvas/30 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-text-primary">
-                1. Input Material Konsumsi
-              </span>
-              <Button type="button" variant="outline" size="sm" onClick={handleAddInput} className="h-7 text-xs gap-1">
+              <div className="flex items-center gap-1.5">
+                <ArrowDownRight className="h-4 w-4 text-brand-700" />
+                <span className="text-xs font-semibold text-text-primary">
+                  1. Input Material Konsumsi
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddInput}
+                className="h-7 text-xs gap-1 hover:border-brand-700/50 hover:bg-brand-50/50 active:scale-95 transition-all cursor-pointer"
+              >
                 <Plus className="h-3 w-3" />
                 Tambah Input
               </Button>
             </div>
 
-            {formData.inputs.map((inp, idx) => (
-              <div key={idx} className="grid grid-cols-12 gap-2 p-2 rounded-input bg-surface border border-border items-center">
-                <div className="col-span-6">
-                  <SelectField
-                    options={materials.map((m) => ({ value: m.id, label: `[${m.code}] ${m.name}` }))}
-                    value={inp.material_id}
-                    onChange={(e) => {
-                      const updated = [...formData.inputs];
-                      updated[idx].material_id = e.target.value;
-                      setFormData({ ...formData, inputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
+            <div className="space-y-2">
+              {formData.inputs.map((inp, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 gap-2 p-2.5 rounded-input bg-surface border border-border items-end shadow-2xs animate-slide-down transition-all"
+                >
+                  <div className="col-span-12 sm:col-span-6">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Material
+                    </label>
+                    <SelectField
+                      options={materials.map((m) => ({ value: m.id, label: `[${m.code}] ${m.name}` }))}
+                      value={inp.material_id}
+                      onChange={(e) => {
+                        const updated = [...formData.inputs];
+                        updated[idx].material_id = e.target.value;
+                        setFormData({ ...formData, inputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      placeholder="Pilih material..."
+                      required
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Jumlah
+                    </label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder="Jumlah"
+                      value={inp.quantity}
+                      onChange={(e) => {
+                        const updated = [...formData.inputs];
+                        updated[idx].quantity = e.target.value;
+                        setFormData({ ...formData, inputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-4 sm:col-span-2">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Satuan
+                    </label>
+                    <SelectField
+                      options={units.map((u) => ({ value: u.id, label: u.symbol }))}
+                      value={inp.unit_id}
+                      onChange={(e) => {
+                        const updated = [...formData.inputs];
+                        updated[idx].unit_id = e.target.value;
+                        setFormData({ ...formData, inputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      placeholder="Satuan..."
+                      required
+                    />
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 flex justify-center pb-1">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveInput(idx)}
+                      disabled={formData.inputs.length <= 1}
+                      className="text-text-secondary hover:text-rose-600 disabled:opacity-30 p-1.5 rounded-md hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Hapus baris"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="col-span-3">
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Jumlah"
-                    value={inp.quantity}
-                    onChange={(e) => {
-                      const updated = [...formData.inputs];
-                      updated[idx].quantity = e.target.value;
-                      setFormData({ ...formData, inputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
-                </div>
-                <div className="col-span-2">
-                  <SelectField
-                    options={units.map((u) => ({ value: u.id, label: u.symbol }))}
-                    value={inp.unit_id}
-                    onChange={(e) => {
-                      const updated = [...formData.inputs];
-                      updated[idx].unit_id = e.target.value;
-                      setFormData({ ...formData, inputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
-                </div>
-                <div className="col-span-1 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveInput(idx)}
-                    disabled={formData.inputs.length <= 1}
-                    className="text-text-secondary hover:text-rose-600 disabled:opacity-30"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Outputs Array */}
-          <div className="border border-border rounded-card p-3 space-y-2 bg-canvas/30">
+          <div className="border border-border rounded-card p-3.5 space-y-2.5 bg-canvas/30 shadow-2xs">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-text-primary">
-                2. Output Produk & Residu (Loss)
-              </span>
-              <Button type="button" variant="outline" size="sm" onClick={handleAddOutput} className="h-7 text-xs gap-1">
+              <div className="flex items-center gap-1.5">
+                <ArrowUpRight className="h-4 w-4 text-emerald-700" />
+                <span className="text-xs font-semibold text-text-primary">
+                  2. Output Produk & Residu (Loss)
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddOutput}
+                className="h-7 text-xs gap-1 hover:border-brand-700/50 hover:bg-brand-50/50 active:scale-95 transition-all cursor-pointer"
+              >
                 <Plus className="h-3 w-3" />
                 Tambah Output
               </Button>
             </div>
 
-            {formData.outputs.map((out, idx) => (
-              <div key={idx} className="grid grid-cols-12 gap-2 p-2 rounded-input bg-surface border border-border items-center">
-                <div className="col-span-4">
-                  <Input
-                    placeholder="Nama Output"
-                    value={out.output_name}
-                    onChange={(e) => {
-                      const updated = [...formData.outputs];
-                      updated[idx].output_name = e.target.value;
-                      setFormData({ ...formData, outputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
+            <div className="space-y-2">
+              {formData.outputs.map((out, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 gap-2 p-2.5 rounded-input bg-surface border border-border items-end shadow-2xs animate-slide-down transition-all"
+                >
+                  <div className="col-span-12 sm:col-span-4">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Nama Output
+                    </label>
+                    <Input
+                      placeholder="Nama Output"
+                      value={out.output_name}
+                      onChange={(e) => {
+                        const updated = [...formData.outputs];
+                        updated[idx].output_name = e.target.value;
+                        setFormData({ ...formData, outputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-12 sm:col-span-3">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Klasifikasi
+                    </label>
+                    <SelectField
+                      options={[
+                        { value: 'product', label: 'Produk Jadi (Positive)' },
+                        { value: 'by_product', label: 'By-Product' },
+                        { value: 'waste', label: 'Limbah / Loss (Negative)' },
+                      ]}
+                      value={out.output_type}
+                      onChange={(e) => {
+                        const updated = [...formData.outputs];
+                        updated[idx].output_type = e.target.value;
+                        setFormData({ ...formData, outputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-6 sm:col-span-2">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Jumlah
+                    </label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder="Qty"
+                      value={out.quantity}
+                      onChange={(e) => {
+                        const updated = [...formData.outputs];
+                        updated[idx].quantity = e.target.value;
+                        setFormData({ ...formData, outputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-4 sm:col-span-2">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Satuan
+                    </label>
+                    <SelectField
+                      options={units.map((u) => ({ value: u.id, label: u.symbol }))}
+                      value={out.unit_id}
+                      onChange={(e) => {
+                        const updated = [...formData.outputs];
+                        updated[idx].unit_id = e.target.value;
+                        setFormData({ ...formData, outputs: updated });
+                      }}
+                      className="h-8.5 text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 flex justify-center pb-1">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveOutput(idx)}
+                      disabled={formData.outputs.length <= 1}
+                      className="text-text-secondary hover:text-rose-600 disabled:opacity-30 p-1.5 rounded-md hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Hapus baris"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="col-span-3">
-                  <SelectField
-                    options={[
-                      { value: 'product', label: 'Produk Jadi (Positive)' },
-                      { value: 'by_product', label: 'By-Product' },
-                      { value: 'waste', label: 'Limbah / Loss (Negative)' },
-                    ]}
-                    value={out.output_type}
-                    onChange={(e) => {
-                      const updated = [...formData.outputs];
-                      updated[idx].output_type = e.target.value;
-                      setFormData({ ...formData, outputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Qty"
-                    value={out.quantity}
-                    onChange={(e) => {
-                      const updated = [...formData.outputs];
-                      updated[idx].quantity = e.target.value;
-                      setFormData({ ...formData, outputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
-                </div>
-                <div className="col-span-2">
-                  <SelectField
-                    options={units.map((u) => ({ value: u.id, label: u.symbol }))}
-                    value={out.unit_id}
-                    onChange={(e) => {
-                      const updated = [...formData.outputs];
-                      updated[idx].unit_id = e.target.value;
-                      setFormData({ ...formData, outputs: updated });
-                    }}
-                    className="h-8 text-xs"
-                    required
-                  />
-                </div>
-                <div className="col-span-1 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveOutput(idx)}
-                    disabled={formData.outputs.length <= 1}
-                    className="text-text-secondary hover:text-rose-600 disabled:opacity-30"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-border">
+          <div className="flex justify-end gap-2.5 pt-3 border-t border-border">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => setIsCreateOpen(false)}
               disabled={isActionLoading}
+              className="hover:bg-neutral-100 transition-colors cursor-pointer"
             >
               Batal
             </Button>
-            <Button type="submit" size="sm" isLoading={isActionLoading}>
+            <Button
+              type="submit"
+              size="sm"
+              isLoading={isActionLoading}
+              className="shadow-sm active:scale-95 transition-all cursor-pointer"
+            >
               Simpan Catatan Produksi
             </Button>
           </div>

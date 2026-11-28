@@ -12,9 +12,9 @@ import { FormField } from '@/components/forms/FormField';
 import { Modal } from '@/components/feedback/Modal';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog';
 import { useToast } from '@/components/feedback/Toast';
-import { materialApi } from '@/lib/api/endpoints/materials';
+import { materialApi } from '@/lib/dummy';
 import { Material, MaterialCategory, Unit } from '@/types';
-import { Plus, Edit2, Ban, Package } from 'lucide-react';
+import { Plus, Edit2, Ban, Eye, Package, FileText, Info } from 'lucide-react';
 
 const FALLBACK_MATERIALS: Material[] = [
   {
@@ -65,6 +65,9 @@ export default function MaterialManagementPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Preview State
+  const [previewMaterial, setPreviewMaterial] = useState<Material | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -247,6 +250,16 @@ export default function MaterialManagementPage() {
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setPreviewMaterial(m)}
+            className="h-8 px-2 text-text-secondary hover:text-brand-700 hover:bg-brand-100/60"
+            title="Lihat Pratinjau Detail Material"
+          >
+            <Eye className="h-3.5 w-3.5" />
+            <span className="text-xs">Preview</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => handleOpenEdit(m)}
             className="h-8 px-2 text-text-secondary hover:text-brand-700"
           >
@@ -300,7 +313,7 @@ export default function MaterialManagementPage() {
           className="flex-1 max-w-none"
         />
 
-        <div className="w-full sm:w-48">
+        <div className="w-full sm:w-56">
           <SelectField
             options={[
               { value: '', label: 'Semua Kategori' },
@@ -333,55 +346,57 @@ export default function MaterialManagementPage() {
         description="Pastikan kode unik dan unit dasar sesuai dengan standar operasional pabrik."
       >
         <form onSubmit={handleSave} className="space-y-4">
-          <FormField label="Kode Material" required hint="Harus unik, contoh: BB-001, PJ-001">
-            <Input
-              placeholder="Contoh: BB-001"
-              value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              disabled={!!editingMaterial}
-              required
-            />
-          </FormField>
-
-          <FormField label="Nama Material" required>
-            <Input
-              placeholder="Contoh: Bahan Baku Gandum A"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </FormField>
-
-          <div className="grid grid-cols-2 gap-3">
-            <FormField label="Kategori" required>
-              <SelectField
-                options={categories.map((c) => ({ value: c.id, label: c.name }))}
-                value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+          <div className="space-y-4 animate-in fade-in-0 duration-200">
+            <FormField label="Kode Material" required hint="Harus unik, contoh: BB-001, PJ-001">
+              <Input
+                placeholder="Contoh: BB-001"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                disabled={!!editingMaterial}
                 required
               />
             </FormField>
 
-            <FormField label="Satuan Dasar" required>
-              <SelectField
-                options={units.map((u) => ({ value: u.id, label: `${u.name} (${u.symbol})` }))}
-                value={formData.base_unit_id}
-                onChange={(e) => setFormData({ ...formData, base_unit_id: e.target.value })}
+            <FormField label="Nama Material" required>
+              <Input
+                placeholder="Contoh: Bahan Baku Gandum A"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
+              />
+            </FormField>
+
+            <div className="grid grid-cols-2 gap-3">
+              <FormField label="Kategori" required>
+                <SelectField
+                  options={categories.map((c) => ({ value: c.id, label: c.name }))}
+                  value={formData.category_id}
+                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                  required
+                />
+              </FormField>
+
+              <FormField label="Satuan Dasar" required>
+                <SelectField
+                  options={units.map((u) => ({ value: u.id, label: `${u.name} (${u.symbol})` }))}
+                  value={formData.base_unit_id}
+                  onChange={(e) => setFormData({ ...formData, base_unit_id: e.target.value })}
+                  required
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Deskripsi / Catatan">
+              <textarea
+                className="flex w-full rounded-input border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 min-h-[80px] transition-colors"
+                placeholder="Keterangan spesifikasi atau standar kualitas..."
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </FormField>
           </div>
 
-          <FormField label="Deskripsi / Catatan">
-            <textarea
-              className="flex w-full rounded-input border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 min-h-[80px]"
-              placeholder="Keterangan spesifikasi atau standar kualitas..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </FormField>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-border">
+          <div className="flex justify-end gap-2 pt-3 border-t border-border">
             <Button
               type="button"
               variant="outline"
@@ -396,6 +411,147 @@ export default function MaterialManagementPage() {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Preview Modal */}
+      <Modal
+        isOpen={!!previewMaterial}
+        onClose={() => setPreviewMaterial(null)}
+        title="Pratinjau Material"
+        description="Detail spesifikasi dan atribut master data material."
+        maxWidth="lg"
+      >
+        {previewMaterial && (
+          <div className="space-y-4 animate-in fade-in-0 duration-200">
+            {/* Top Identity Card */}
+            <div className="flex items-start justify-between p-4 rounded-card bg-canvas border border-border">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-card bg-brand-100 text-brand-700 border border-emerald-200 mt-0.5">
+                  <Package className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-brand-100 text-brand-950 border border-emerald-200">
+                      {previewMaterial.code}
+                    </span>
+                    <span className="text-xs text-text-secondary font-mono">
+                      ID #{previewMaterial.id}
+                    </span>
+                  </div>
+                  <h4 className="text-base font-bold text-text-primary mt-1">
+                    {previewMaterial.name}
+                  </h4>
+                </div>
+              </div>
+
+              <StatusBadge
+                status={previewMaterial.is_active ? 'active' : 'inactive'}
+                label={previewMaterial.is_active ? 'Aktif' : 'Nonaktif'}
+              />
+            </div>
+
+            {/* Material Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-3 rounded-card border border-border bg-surface">
+                <span className="text-xs font-medium text-text-secondary block mb-1">
+                  Kategori
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-text-primary">
+                    {previewMaterial.category?.name || 'Umum'}
+                  </span>
+                  {previewMaterial.category?.code && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 text-text-secondary font-mono border border-border">
+                      {previewMaterial.category.code}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-3 rounded-card border border-border bg-surface">
+                <span className="text-xs font-medium text-text-secondary block mb-1">
+                  Satuan Dasar (Base Unit)
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-text-primary">
+                    {previewMaterial.base_unit?.name || previewMaterial.base_unit?.symbol || 'Kilogram'}
+                  </span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-neutral-100 text-text-secondary font-mono border border-border">
+                    {previewMaterial.base_unit?.symbol || 'kg'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-card border border-border bg-surface">
+                <span className="text-xs font-medium text-text-secondary block mb-1">
+                  Organisasi / Tenant
+                </span>
+                <span className="text-sm font-medium text-text-primary">
+                  Organisasi #{previewMaterial.organization_id || 1}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-card border border-border bg-surface">
+                <span className="text-xs font-medium text-text-secondary block mb-1">
+                  Status Operasional
+                </span>
+                <span className="text-sm font-medium text-text-primary">
+                  {previewMaterial.is_active
+                    ? 'Tersedia untuk transaksi & BOM'
+                    : 'Dinonaktifkan (arsip historis)'}
+                </span>
+              </div>
+            </div>
+
+            {/* Description Card */}
+            <div className="p-3.5 rounded-card border border-border bg-surface">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-text-secondary mb-1.5">
+                <FileText className="h-3.5 w-3.5" />
+                <span>Deskripsi / Catatan Tambahan</span>
+              </div>
+              {previewMaterial.description ? (
+                <p className="text-sm text-text-primary whitespace-pre-wrap leading-relaxed">
+                  {previewMaterial.description}
+                </p>
+              ) : (
+                <p className="text-xs text-text-secondary italic">
+                  Tidak ada deskripsi atau catatan khusus untuk material ini.
+                </p>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-border">
+              <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                <Info className="h-3.5 w-3.5" />
+                <span>Informasi bersifat hanya-baca (Read-Only)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreviewMaterial(null)}
+                >
+                  Tutup
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    const target = previewMaterial;
+                    setPreviewMaterial(null);
+                    handleOpenEdit(target);
+                  }}
+                >
+                  <Edit2 className="h-3.5 w-3.5 mr-1" />
+                  Ubah Data
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {/* Deactivate Confirmation */}

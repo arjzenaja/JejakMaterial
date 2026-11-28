@@ -3,3 +3,5 @@ export * from './PasswordInput';
 export * from './SearchInput';
 export * from './SelectField';
 export * from './DateRangeFilter';
+export * from './DatePicker';
+

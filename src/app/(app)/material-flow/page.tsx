@@ -7,7 +7,7 @@ import { SelectField } from '@/components/forms/SelectField';
 import { DataTable, Column } from '@/components/data-display/DataTable';
 import { LoadingState } from '@/components/data-display/LoadingState';
 import { ErrorState } from '@/components/data-display/ErrorState';
-import { flowApi } from '@/lib/api/endpoints/flows';
+import { flowApi } from '@/lib/dummy';
 import { MaterialFlow, MaterialLoss } from '@/types';
 import { formatNumber, formatDate } from '@/lib/utils';
 import { GitBranch, AlertTriangle, ArrowRight, CheckCircle2, ShieldAlert } from 'lucide-react';

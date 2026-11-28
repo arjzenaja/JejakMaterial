@@ -1,0 +1,154 @@
+{
+  "records": [
+    {
+      "id": 1,
+      "production_number": "PRD-20261110-001",
+      "process_code": "PROC-FORMULASI-A",
+      "production_date": "2026-11-10T10:00:00Z",
+      "status": "finalized",
+      "created_by": 1,
+      "inputs": [
+        {
+          "id": 1,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": null, "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "50.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "source_movement_line_id": null
+        },
+        {
+          "id": 2,
+          "material": { "id": 2, "code": "BB-002", "name": "Bahan Baku B (Cairan Pelarut)", "description": null, "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" }, "organization_id": 1 },
+          "material_id": 2,
+          "quantity": "20.000000",
+          "unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" },
+          "unit_id": 2,
+          "source_movement_line_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "id": 1,
+          "output_name": "Produk Alpha Formulasi Batch-1",
+          "output_type": "product",
+          "output_material": { "id": 3, "code": "PJ-001", "name": "Produk Alpha (Kemasan 1L)", "description": null, "is_active": true, "category": { "id": 2, "name": "Produk Jadi", "code": "PJ", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "output_material_id": 3,
+          "quantity": "65.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        },
+        {
+          "id": 2,
+          "output_name": "Residu / Sludge Pengadukan Batch-1",
+          "output_type": "waste",
+          "output_material": null,
+          "output_material_id": null,
+          "quantity": "5.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "production_number": "PRD-20261118-002",
+      "process_code": "PROC-PACKAGING-B",
+      "production_date": "2026-11-18T08:30:00Z",
+      "status": "finalized",
+      "created_by": 3,
+      "inputs": [
+        {
+          "id": 3,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": null, "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "30.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "source_movement_line_id": null
+        },
+        {
+          "id": 4,
+          "material": { "id": 4, "code": "PK-001", "name": "Kemasan Botol HDPE 1L", "description": null, "is_active": true, "category": { "id": 3, "name": "Kemasan", "code": "PK", "is_active": true }, "base_unit": { "id": 3, "code": "pcs", "name": "Pieces", "symbol": "pcs" }, "organization_id": 1 },
+          "material_id": 4,
+          "quantity": "30.000000",
+          "unit": { "id": 3, "code": "pcs", "name": "Pieces", "symbol": "pcs" },
+          "unit_id": 3,
+          "source_movement_line_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "id": 3,
+          "output_name": "Produk Kemasan Alpha Mini 500ml",
+          "output_type": "product",
+          "output_material": { "id": 3, "code": "PJ-001", "name": "Produk Alpha (Kemasan 1L)", "description": null, "is_active": true, "category": { "id": 2, "name": "Produk Jadi", "code": "PJ", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "output_material_id": 3,
+          "quantity": "28.500000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        },
+        {
+          "id": 4,
+          "output_name": "Penyusutan Proses Packaging",
+          "output_type": "waste",
+          "output_material": null,
+          "output_material_id": null,
+          "quantity": "1.500000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "production_number": "PRD-20261119-003",
+      "process_code": "PROC-MIX-01",
+      "production_date": "2026-11-19T09:00:00Z",
+      "status": "draft",
+      "created_by": 3,
+      "inputs": [
+        {
+          "id": 5,
+          "material": { "id": 1, "code": "BB-001", "name": "Bahan Baku A (Minyak Nabati)", "description": null, "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 1,
+          "quantity": "40.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "source_movement_line_id": null
+        },
+        {
+          "id": 6,
+          "material": { "id": 5, "code": "BB-003", "name": "Bahan Aditif C (Stabilizer)", "description": null, "is_active": true, "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true }, "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" }, "organization_id": 1 },
+          "material_id": 5,
+          "quantity": "5.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1,
+          "source_movement_line_id": null
+        }
+      ],
+      "outputs": [
+        {
+          "id": 5,
+          "output_name": "Produk Campuran Batch Baru",
+          "output_type": "product",
+          "output_material": null,
+          "output_material_id": null,
+          "quantity": "43.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        },
+        {
+          "id": 6,
+          "output_name": "Limbah Mixing Residu",
+          "output_type": "waste",
+          "output_material": null,
+          "output_material_id": null,
+          "quantity": "2.000000",
+          "unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+          "unit_id": 1
+        }
+      ]
+    }
+  ]
+}

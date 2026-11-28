@@ -10,11 +10,11 @@ import { SearchInput } from '@/components/forms/SearchInput';
 import { SelectField } from '@/components/forms/SelectField';
 import { FormField } from '@/components/forms/FormField';
 import { DateRangeFilter } from '@/components/forms/DateRangeFilter';
+import { DatePicker } from '@/components/forms/DatePicker';
 import { Modal } from '@/components/feedback/Modal';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog';
 import { useToast } from '@/components/feedback/Toast';
-import { movementApi } from '@/lib/api/endpoints/movements';
-import { materialApi } from '@/lib/api/endpoints/materials';
+import { movementApi, materialApi } from '@/lib/dummy';
 import { MaterialMovement, Material, Unit, Location } from '@/types';
 import { formatDate, getMovementTypeLabel } from '@/lib/utils';
 import { Plus, Eye, CheckCircle2, RotateCcw, Trash2 } from 'lucide-react';
@@ -306,11 +306,11 @@ export default function MaterialMovementsPage() {
             variant="ghost"
             size="sm"
             onClick={() => setViewingMovement(m)}
-            className="h-8 px-2 text-text-secondary hover:text-brand-700"
+            className="h-8 px-2.5 text-text-secondary hover:text-brand-700 hover:bg-brand-100/50 transition-all duration-150 active:scale-95 cursor-pointer"
             title="Lihat Detail"
           >
-            <Eye className="h-3.5 w-3.5" />
-            <span className="text-xs">Detail</span>
+            <Eye className="h-3.5 w-3.5 transition-transform duration-150 group-hover:scale-110" />
+            <span className="text-xs font-medium">Detail</span>
           </Button>
 
           {m.status === 'draft' && (
@@ -430,61 +430,65 @@ export default function MaterialMovementsPage() {
         onClose={() => setViewingMovement(null)}
         title={`Detail Transaksi: ${viewingMovement?.movement_number}`}
         maxWidth="lg"
+        animation="scale-up"
       >
         {viewingMovement && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-input bg-canvas border border-border text-xs">
-              <div>
-                <span className="text-text-secondary block">Jenis</span>
-                <span className="font-semibold text-text-primary capitalize">
+          <div className="space-y-4 animate-scale-up">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-card bg-canvas/70 border border-border text-xs">
+              <div className="space-y-1">
+                <span className="text-text-secondary text-[11px] block font-medium">Jenis Transaksi</span>
+                <span className="font-semibold text-text-primary capitalize text-sm">
                   {getMovementTypeLabel(viewingMovement.movement_type)}
                 </span>
               </div>
-              <div>
-                <span className="text-text-secondary block">Tanggal</span>
-                <span className="font-semibold text-text-primary">
+              <div className="space-y-1">
+                <span className="text-text-secondary text-[11px] block font-medium">Tanggal Transaksi</span>
+                <span className="font-semibold text-text-primary text-sm">
                   {formatDate(viewingMovement.movement_date)}
                 </span>
               </div>
-              <div>
-                <span className="text-text-secondary block">Status</span>
-                <StatusBadge status={viewingMovement.status} />
+              <div className="space-y-1">
+                <span className="text-text-secondary text-[11px] block font-medium">Status</span>
+                <div>
+                  <StatusBadge status={viewingMovement.status} />
+                </div>
               </div>
-              <div>
-                <span className="text-text-secondary block">Diposting</span>
-                <span className="font-semibold text-text-primary">
+              <div className="space-y-1">
+                <span className="text-text-secondary text-[11px] block font-medium">Diposting Pada</span>
+                <span className="font-semibold text-text-primary text-sm">
                   {viewingMovement.posted_at ? formatDate(viewingMovement.posted_at) : '-'}
                 </span>
               </div>
             </div>
 
-            <div className="border border-border rounded-card overflow-hidden">
+            <div className="border border-border rounded-card overflow-hidden shadow-2xs">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-canvas border-b border-border font-semibold text-text-secondary">
-                    <th className="p-2.5">Material</th>
-                    <th className="p-2.5">Jumlah</th>
-                    <th className="p-2.5">Dari Lokasi</th>
-                    <th className="p-2.5">Ke Lokasi</th>
-                    <th className="p-2.5 text-right">Biaya Satuan</th>
+                    <th className="p-3">Material</th>
+                    <th className="p-3">Jumlah</th>
+                    <th className="p-3">Dari Lokasi</th>
+                    <th className="p-3">Ke Lokasi</th>
+                    <th className="p-3 text-right">Biaya Satuan</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {viewingMovement.lines?.map((line, idx) => (
-                    <tr key={idx}>
-                      <td className="p-2.5 font-medium text-text-primary">
-                        [{line.material?.code}] {line.material?.name}
+                    <tr key={idx} className="hover:bg-neutral-50/60 transition-colors">
+                      <td className="p-3 font-medium text-text-primary">
+                        <span className="text-text-secondary font-mono mr-1">[{line.material?.code}]</span>
+                        {line.material?.name}
                       </td>
-                      <td className="p-2.5 font-semibold text-brand-700">
+                      <td className="p-3 font-bold text-brand-700">
                         {line.quantity} {line.unit?.symbol}
                       </td>
-                      <td className="p-2.5 text-text-secondary">
+                      <td className="p-3 text-text-secondary">
                         {line.from_location?.name || '-'}
                       </td>
-                      <td className="p-2.5 text-text-secondary">
+                      <td className="p-3 text-text-secondary">
                         {line.to_location?.name || '-'}
                       </td>
-                      <td className="p-2.5 text-right font-mono">
+                      <td className="p-3 text-right font-mono font-medium">
                         {line.unit_cost ? `Rp ${Number(line.unit_cost).toLocaleString('id-ID')}` : '-'}
                       </td>
                     </tr>
@@ -494,7 +498,7 @@ export default function MaterialMovementsPage() {
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button size="sm" variant="outline" onClick={() => setViewingMovement(null)}>
+              <Button size="sm" variant="outline" onClick={() => setViewingMovement(null)} className="px-4">
                 Tutup
               </Button>
             </div>
@@ -509,9 +513,10 @@ export default function MaterialMovementsPage() {
         title="Catat Pergerakan Material Baru"
         description="Pastikan kuantitas fisik dan gudang tujuan valid sebelum posting."
         maxWidth="xl"
+        animation="slide-down"
       >
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleCreateSubmit} className="space-y-4 animate-scale-up">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <FormField label="Jenis Pergerakan" required>
               <SelectField
                 options={[
@@ -529,17 +534,17 @@ export default function MaterialMovementsPage() {
             </FormField>
 
             <FormField label="Tanggal Transaksi" required>
-              <Input
-                type="date"
+              <DatePicker
                 value={formData.movement_date}
-                onChange={(e) => setFormData({ ...formData, movement_date: e.target.value })}
+                onChange={(date) => setFormData({ ...formData, movement_date: date })}
+                placeholder="Pilih tanggal transaksi..."
                 required
               />
             </FormField>
           </div>
 
           {/* Dynamic Item Lines */}
-          <div className="border border-border rounded-card p-3 space-y-3 bg-canvas/40">
+          <div className="border border-border rounded-card p-3.5 space-y-3 bg-canvas/40 shadow-2xs">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-text-primary">
                 Item Material yang Dipindahkan
@@ -549,83 +554,89 @@ export default function MaterialMovementsPage() {
                 variant="outline"
                 size="sm"
                 onClick={handleAddLine}
-                className="h-7 text-xs gap-1"
+                className="h-7 text-xs gap-1 hover:border-brand-700/60 hover:text-brand-700 transition-colors"
               >
                 <Plus className="h-3 w-3" />
                 Tambah Baris
               </Button>
             </div>
 
-            {formData.lines.map((line, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-12 gap-2 p-2.5 rounded-input bg-surface border border-border items-end"
-              >
-                <div className="col-span-4">
-                  <label className="text-[11px] font-semibold text-text-secondary block mb-1">
-                    Material
-                  </label>
-                  <SelectField
-                    options={materials.map((m) => ({ value: m.id, label: `[${m.code}] ${m.name}` }))}
-                    value={line.material_id}
-                    onChange={(e) => handleLineChange(idx, 'material_id', e.target.value)}
-                    className="h-9 text-xs"
-                    required
-                  />
-                </div>
+            <div className="space-y-2.5">
+              {formData.lines.map((line, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 gap-2 p-2.5 rounded-input bg-surface border border-border items-end shadow-2xs animate-slide-down"
+                >
+                  <div className="col-span-12 sm:col-span-4">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Material
+                    </label>
+                    <SelectField
+                      options={materials.map((m) => ({ value: m.id, label: `[${m.code}] ${m.name}` }))}
+                      value={line.material_id}
+                      onChange={(e) => handleLineChange(idx, 'material_id', e.target.value)}
+                      className="h-9 text-xs"
+                      placeholder="Pilih material..."
+                      required
+                    />
+                  </div>
 
-                <div className="col-span-2">
-                  <label className="text-[11px] font-semibold text-text-secondary block mb-1">
-                    Jumlah
-                  </label>
-                  <Input
-                    type="number"
-                    step="any"
-                    min="0.000001"
-                    value={line.quantity}
-                    onChange={(e) => handleLineChange(idx, 'quantity', e.target.value)}
-                    className="h-9 text-xs"
-                    required
-                  />
-                </div>
+                  <div className="col-span-6 sm:col-span-2">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Jumlah
+                    </label>
+                    <Input
+                      type="number"
+                      step="any"
+                      min="0.000001"
+                      value={line.quantity}
+                      onChange={(e) => handleLineChange(idx, 'quantity', e.target.value)}
+                      className="h-9 text-xs"
+                      required
+                    />
+                  </div>
 
-                <div className="col-span-2">
-                  <label className="text-[11px] font-semibold text-text-secondary block mb-1">
-                    Satuan
-                  </label>
-                  <SelectField
-                    options={units.map((u) => ({ value: u.id, label: u.symbol }))}
-                    value={line.unit_id}
-                    onChange={(e) => handleLineChange(idx, 'unit_id', e.target.value)}
-                    className="h-9 text-xs"
-                    required
-                  />
-                </div>
+                  <div className="col-span-6 sm:col-span-2">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Satuan
+                    </label>
+                    <SelectField
+                      options={units.map((u) => ({ value: u.id, label: u.symbol }))}
+                      value={line.unit_id}
+                      onChange={(e) => handleLineChange(idx, 'unit_id', e.target.value)}
+                      className="h-9 text-xs"
+                      placeholder="Pilih satuan..."
+                      required
+                    />
+                  </div>
 
-                <div className="col-span-3">
-                  <label className="text-[11px] font-semibold text-text-secondary block mb-1">
-                    Ke Lokasi
-                  </label>
-                  <SelectField
-                    options={locations.map((loc) => ({ value: loc.id, label: loc.name }))}
-                    value={line.to_location_id}
-                    onChange={(e) => handleLineChange(idx, 'to_location_id', e.target.value)}
-                    className="h-9 text-xs"
-                  />
-                </div>
+                  <div className="col-span-10 sm:col-span-3">
+                    <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                      Ke Lokasi
+                    </label>
+                    <SelectField
+                      options={locations.map((loc) => ({ value: loc.id, label: loc.name }))}
+                      value={line.to_location_id}
+                      onChange={(e) => handleLineChange(idx, 'to_location_id', e.target.value)}
+                      className="h-9 text-xs"
+                      placeholder="Pilih lokasi..."
+                    />
+                  </div>
 
-                <div className="col-span-1 flex justify-center pb-1">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveLine(idx)}
-                    disabled={formData.lines.length <= 1}
-                    className="text-text-secondary hover:text-rose-600 disabled:opacity-30 p-1"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="col-span-2 sm:col-span-1 flex justify-center pb-1">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveLine(idx)}
+                      disabled={formData.lines.length <= 1}
+                      className="text-text-secondary hover:text-rose-600 disabled:opacity-30 p-1.5 rounded-md hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Hapus baris"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-border">

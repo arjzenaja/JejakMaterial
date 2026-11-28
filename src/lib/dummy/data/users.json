@@ -1,0 +1,125 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin Demo",
+      "email": "admin@demo.com",
+      "is_active": true,
+      "organization_id": 1,
+      "permissions": ["dashboard.view", "materials.view", "materials.create", "materials.update", "movements.view", "movements.create", "movements.post", "production.view", "production.create", "production.finalize", "mfca.view", "mfca.run", "reports.view", "reports.generate", "users.view", "users.create", "users.update"],
+      "roles": [{ "id": 1, "name": "Admin", "code": "admin" }]
+    },
+    {
+      "id": 2,
+      "name": "Petugas Gudang Utama",
+      "email": "gudang@demo.com",
+      "is_active": true,
+      "organization_id": 1,
+      "permissions": ["dashboard.view", "materials.view", "movements.view", "movements.create", "movements.post"],
+      "roles": [{ "id": 2, "name": "Gudang", "code": "gudang" }]
+    },
+    {
+      "id": 3,
+      "name": "Supervisor Lini Produksi",
+      "email": "produksi@demo.com",
+      "is_active": true,
+      "organization_id": 1,
+      "permissions": ["dashboard.view", "materials.view", "production.view", "production.create", "production.finalize"],
+      "roles": [{ "id": 3, "name": "Produksi", "code": "produksi" }]
+    },
+    {
+      "id": 4,
+      "name": "Analis Keberlanjutan & MFCA",
+      "email": "analis@demo.com",
+      "is_active": true,
+      "organization_id": 1,
+      "permissions": ["dashboard.view", "materials.view", "movements.view", "production.view", "balance.view", "flow.view", "mfca.view", "mfca.run", "reports.view", "reports.generate"],
+      "roles": [{ "id": 4, "name": "Analis", "code": "analis" }]
+    },
+    {
+      "id": 5,
+      "name": "Manajer Operasional",
+      "email": "manajer@demo.com",
+      "is_active": false,
+      "organization_id": 1,
+      "permissions": ["dashboard.view", "materials.view", "reports.view"],
+      "roles": [{ "id": 5, "name": "Manager", "code": "manager" }]
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "code": "admin",
+      "permissions": [
+        { "id": 1, "code": "dashboard.view", "description": "Lihat Dashboard" },
+        { "id": 2, "code": "materials.view", "description": "Lihat Master Material" },
+        { "id": 3, "code": "materials.create", "description": "Tambah Material Baru" },
+        { "id": 4, "code": "materials.update", "description": "Edit Data Material" },
+        { "id": 5, "code": "movements.view", "description": "Lihat Pergerakan Material" },
+        { "id": 6, "code": "movements.create", "description": "Catat Pergerakan Material" },
+        { "id": 7, "code": "movements.post", "description": "Posting Transaksi Mutasi" },
+        { "id": 8, "code": "movements.correct", "description": "Reversal Transaksi" },
+        { "id": 9, "code": "production.view", "description": "Lihat Catatan Produksi" },
+        { "id": 10, "code": "production.create", "description": "Buat Catatan Produksi" },
+        { "id": 11, "code": "production.finalize", "description": "Finalisasi Batch Produksi" },
+        { "id": 12, "code": "mfca.view", "description": "Lihat Analisis MFCA" },
+        { "id": 13, "code": "mfca.run", "description": "Jalankan Kalkulasi MFCA" },
+        { "id": 14, "code": "reports.view", "description": "Lihat Laporan" },
+        { "id": 15, "code": "reports.generate", "description": "Generate Laporan Baru" },
+        { "id": 16, "code": "users.view", "description": "Lihat Daftar Pengguna" },
+        { "id": 17, "code": "users.create", "description": "Tambah Pengguna Baru" },
+        { "id": 18, "code": "users.update", "description": "Kelola Pengguna" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Gudang",
+      "code": "gudang",
+      "permissions": [
+        { "id": 1, "code": "dashboard.view", "description": "Lihat Dashboard" },
+        { "id": 2, "code": "materials.view", "description": "Lihat Master Material" },
+        { "id": 5, "code": "movements.view", "description": "Lihat Pergerakan Material" },
+        { "id": 6, "code": "movements.create", "description": "Catat Pergerakan Material" },
+        { "id": 7, "code": "movements.post", "description": "Posting Transaksi Mutasi" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Produksi",
+      "code": "produksi",
+      "permissions": [
+        { "id": 1, "code": "dashboard.view", "description": "Lihat Dashboard" },
+        { "id": 2, "code": "materials.view", "description": "Lihat Master Material" },
+        { "id": 9, "code": "production.view", "description": "Lihat Catatan Produksi" },
+        { "id": 10, "code": "production.create", "description": "Buat Catatan Produksi" },
+        { "id": 11, "code": "production.finalize", "description": "Finalisasi Batch Produksi" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Analis",
+      "code": "analis",
+      "permissions": [
+        { "id": 1, "code": "dashboard.view", "description": "Lihat Dashboard" },
+        { "id": 2, "code": "materials.view", "description": "Lihat Master Material" },
+        { "id": 5, "code": "movements.view", "description": "Lihat Pergerakan Material" },
+        { "id": 9, "code": "production.view", "description": "Lihat Catatan Produksi" },
+        { "id": 12, "code": "mfca.view", "description": "Lihat Analisis MFCA" },
+        { "id": 13, "code": "mfca.run", "description": "Jalankan Kalkulasi MFCA" },
+        { "id": 14, "code": "reports.view", "description": "Lihat Laporan" },
+        { "id": 15, "code": "reports.generate", "description": "Generate Laporan Baru" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Manager",
+      "code": "manager",
+      "permissions": [
+        { "id": 1, "code": "dashboard.view", "description": "Lihat Dashboard" },
+        { "id": 2, "code": "materials.view", "description": "Lihat Master Material" },
+        { "id": 14, "code": "reports.view", "description": "Lihat Laporan" }
+      ]
+    }
+  ]
+}

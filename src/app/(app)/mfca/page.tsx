@@ -7,10 +7,11 @@ import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { SelectField } from '@/components/forms/SelectField';
+import { DatePicker } from '@/components/forms/DatePicker';
 import { FormField } from '@/components/forms/FormField';
 import { Modal } from '@/components/feedback/Modal';
 import { useToast } from '@/components/feedback/Toast';
-import { mfcaApi } from '@/lib/api/endpoints/mfca';
+import { mfcaApi } from '@/lib/dummy';
 import { MfcaAnalysis } from '@/types';
 import { formatDate, formatNumber } from '@/lib/utils';
 import { Play, Eye, Coins, ShieldCheck, PieChart, FileText, CheckCircle2 } from 'lucide-react';
@@ -223,71 +224,121 @@ export default function MfcaAnalysisPage() {
         title="Jalankan Analisis Biaya MFCA"
         description="Pilih periode dan metode standar alokasi biaya sebelum perhitungan dijalankan."
         maxWidth="md"
+        animation="slide-down"
       >
         <form onSubmit={handleRunSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          {/* Animated Date Pickers */}
+          <div className="animate-field-enter-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <FormField label="Periode Mulai" required>
-              <Input
-                type="date"
+              <DatePicker
                 value={formData.period_start}
-                onChange={(e) => setFormData({ ...formData, period_start: e.target.value })}
+                onChange={(date) => setFormData({ ...formData, period_start: date })}
+                maxDate={formData.period_end}
+                rangePartnerDate={formData.period_end}
+                rangeMode="start"
+                align="left"
+                placeholder="Pilih periode mulai"
                 required
               />
             </FormField>
 
             <FormField label="Periode Selesai" required>
-              <Input
-                type="date"
+              <DatePicker
                 value={formData.period_end}
-                onChange={(e) => setFormData({ ...formData, period_end: e.target.value })}
+                onChange={(date) => setFormData({ ...formData, period_end: date })}
+                minDate={formData.period_start}
+                rangePartnerDate={formData.period_start}
+                rangeMode="end"
+                align="left"
+                placeholder="Pilih periode selesai"
                 required
               />
             </FormField>
           </div>
 
-          <FormField label="Cakupan Analisis (Scope)" required>
-            <SelectField
-              options={[
-                { value: 'process', label: 'Per Lini Proses Manufaktur' },
-                { value: 'organization', label: 'Seluruh Organisasi / Pabrik' },
-              ]}
-              value={formData.scope_type}
-              onChange={(e) => setFormData({ ...formData, scope_type: e.target.value })}
-              required
-            />
-          </FormField>
+          {/* Animated Cakupan Analisis */}
+          <div className="animate-field-enter-2">
+            <FormField label="Cakupan Analisis (Scope)" required>
+              <SelectField
+                options={[
+                  {
+                    value: 'process',
+                    label: 'Per Lini Proses Manufaktur',
+                    description: 'Kalkulasi aliran biaya dan loss pada setiap workstation / lini produksi',
+                  },
+                  {
+                    value: 'organization',
+                    label: 'Seluruh Organisasi / Pabrik',
+                    description: 'Konsolidasi menyeluruh biaya aliran material di seluruh fasilitas pabrik',
+                  },
+                ]}
+                value={formData.scope_type}
+                onChange={(e) => setFormData({ ...formData, scope_type: e.target.value })}
+                required
+              />
+            </FormField>
+          </div>
 
-          <FormField
-            label="Versi Metode MFCA"
-            required
-            hint="Sistem akan menolak versi yang tidak disetujui untuk menjaga konsistensi audit."
-          >
-            <SelectField
-              options={[
-                { value: 'v1-approved', label: 'v1-approved (Standar Disetujui)' },
-                { value: 'mfca-iso14051-v1', label: 'mfca-iso14051-v1 (Standar ISO 14051)' },
-                { value: 'draft-unapproved', label: 'draft-unapproved (Uji Tolak AC-MFCA-001)' },
-              ]}
-              value={formData.method_version}
-              onChange={(e) => setFormData({ ...formData, method_version: e.target.value })}
+          {/* Animated Versi Metode MFCA */}
+          <div className="animate-field-enter-3">
+            <FormField
+              label="Versi Metode MFCA"
               required
-            />
-          </FormField>
-
-          <div className="flex justify-end gap-2 pt-2 border-t border-border">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setIsRunModalOpen(false)}
-              disabled={isCalculating}
+              hint="Sistem akan menolak versi yang tidak disetujui untuk menjaga konsistensi audit."
             >
-              Batal
-            </Button>
-            <Button type="submit" size="sm" isLoading={isCalculating} className="gap-1.5">
-              <Play className="h-3.5 w-3.5 fill-white" />
-              Kalkulasi MFCA
-            </Button>
+              <SelectField
+                options={[
+                  {
+                    value: 'v1-approved',
+                    label: 'v1-approved (Standar Disetujui)',
+                    badge: 'Disetujui',
+                    badgeVariant: 'success',
+                    description: 'Metodologi terakreditasi audit ISO 14051 untuk pelaporan resmi',
+                  },
+                  {
+                    value: 'mfca-iso14051-v1',
+                    label: 'mfca-iso14051-v1 (Standar ISO 14051)',
+                    badge: 'ISO 14051',
+                    badgeVariant: 'info',
+                    description: 'Implementasi standar internasional akuntansi biaya aliran material',
+                  },
+                  {
+                    value: 'draft-unapproved',
+                    label: 'draft-unapproved (Uji Tolak AC-MFCA-001)',
+                    badge: 'Uji Tolak',
+                    badgeVariant: 'warning',
+                    description: 'Formula draft non-aktif untuk pengujian validasi sistem (AC-MFCA-001)',
+                  },
+                ]}
+                value={formData.method_version}
+                onChange={(e) => setFormData({ ...formData, method_version: e.target.value })}
+                required
+              />
+            </FormField>
+          </div>
+
+          {/* Animated Actions */}
+          <div className="animate-field-enter-4 flex items-center justify-between pt-3 border-t border-border mt-4">
+            <div className="text-[11px] text-text-secondary hidden sm:flex items-center gap-1.5">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Formula ISO 14051 Siap Dijalankan
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsRunModalOpen(false)}
+                disabled={isCalculating}
+                className="cursor-pointer"
+              >
+                Batal
+              </Button>
+              <Button type="submit" size="sm" isLoading={isCalculating} className="gap-1.5 cursor-pointer">
+                <Play className="h-3.5 w-3.5 fill-white" />
+                Kalkulasi MFCA
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>

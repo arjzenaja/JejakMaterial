@@ -1,0 +1,80 @@
+{
+  "reports": [
+    {
+      "id": 1,
+      "report_type": "Laporan Rekonsiliasi Keseimbangan Material",
+      "parameters": { "from": "2026-11-01", "to": "2026-11-30", "scope": "all_materials" },
+      "generated_at": "2026-11-19T09:00:00Z",
+      "status": "completed",
+      "file_path": "reports/balance_report_20261119.pdf"
+    },
+    {
+      "id": 2,
+      "report_type": "Laporan Akuntansi Biaya MFCA ISO 14051",
+      "parameters": { "from": "2026-11-01", "to": "2026-11-30", "method": "v1-approved" },
+      "generated_at": "2026-11-19T10:45:00Z",
+      "status": "completed",
+      "file_path": "reports/mfca_summary_20261119.pdf"
+    },
+    {
+      "id": 3,
+      "report_type": "Ringkasan Aliran Material Bulanan",
+      "parameters": { "from": "2026-11-01", "to": "2026-11-30" },
+      "generated_at": "2026-11-20T08:30:00Z",
+      "status": "completed",
+      "file_path": "reports/flow_summary_20261120.pdf"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": 1,
+      "action": "mfca.run",
+      "entity_type": "MfcaAnalysis",
+      "entity_id": 1,
+      "actor_user_id": 1,
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-15T10:30:00Z",
+      "user": { "id": 1, "name": "Admin Demo", "email": "admin@demo.com", "is_active": true, "organization_id": 1, "permissions": [], "roles": [{ "id": 1, "name": "Admin", "code": "admin" }] }
+    },
+    {
+      "id": 2,
+      "action": "movement.post",
+      "entity_type": "MaterialMovement",
+      "entity_id": 1,
+      "actor_user_id": 1,
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-01T08:15:00Z",
+      "user": { "id": 1, "name": "Admin Demo", "email": "admin@demo.com", "is_active": true, "organization_id": 1, "permissions": [], "roles": [{ "id": 1, "name": "Admin", "code": "admin" }] }
+    },
+    {
+      "id": 3,
+      "action": "production.finalize",
+      "entity_type": "ProductionRecord",
+      "entity_id": 1,
+      "actor_user_id": 1,
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-10T10:30:00Z",
+      "user": { "id": 1, "name": "Admin Demo", "email": "admin@demo.com", "is_active": true, "organization_id": 1, "permissions": [], "roles": [{ "id": 1, "name": "Admin", "code": "admin" }] }
+    },
+    {
+      "id": 4,
+      "action": "material.create",
+      "entity_type": "Material",
+      "entity_id": 5,
+      "actor_user_id": 1,
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-01T07:00:00Z",
+      "user": { "id": 1, "name": "Admin Demo", "email": "admin@demo.com", "is_active": true, "organization_id": 1, "permissions": [], "roles": [{ "id": 1, "name": "Admin", "code": "admin" }] }
+    },
+    {
+      "id": 5,
+      "action": "report.generate",
+      "entity_type": "Report",
+      "entity_id": 1,
+      "actor_user_id": 1,
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-19T09:00:00Z",
+      "user": { "id": 1, "name": "Admin Demo", "email": "admin@demo.com", "is_active": true, "organization_id": 1, "permissions": [], "roles": [{ "id": 1, "name": "Admin", "code": "admin" }] }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "analyses": [
+    {
+      "id": 1,
+      "analysis_number": "MFCA-20261101-A8F2",
+      "period_start": "2026-11-01",
+      "period_end": "2026-11-15",
+      "scope_type": "process",
+      "scope_id": null,
+      "method_version": "v1-approved",
+      "status": "completed",
+      "calculated_at": "2026-11-15T10:30:00Z",
+      "result_snapshot": {
+        "method_version": "v1-approved",
+        "total_input_quantity": "70.000000",
+        "positive_product_quantity": "65.000000",
+        "negative_product_quantity": "5.000000",
+        "positive_ratio": 92.86,
+        "negative_ratio": 7.14,
+        "material_cost": 700000,
+        "energy_cost": 105000,
+        "system_cost": 70000,
+        "waste_management_cost": 35000,
+        "total_cost": 910000,
+        "positive_product_cost": 845026,
+        "negative_product_cost": 64974,
+        "currency": "IDR"
+      }
+    },
+    {
+      "id": 2,
+      "analysis_number": "MFCA-20261116-B4C1",
+      "period_start": "2026-11-16",
+      "period_end": "2026-11-30",
+      "scope_type": "facility",
+      "scope_id": null,
+      "method_version": "v1-approved",
+      "status": "completed",
+      "calculated_at": "2026-11-28T14:00:00Z",
+      "result_snapshot": {
+        "method_version": "v1-approved",
+        "total_input_quantity": "75.000000",
+        "positive_product_quantity": "72.000000",
+        "negative_product_quantity": "3.000000",
+        "positive_ratio": 96.00,
+        "negative_ratio": 4.00,
+        "material_cost": 750000,
+        "energy_cost": 112500,
+        "system_cost": 75000,
+        "waste_management_cost": 37500,
+        "total_cost": 975000,
+        "positive_product_cost": 936000,
+        "negative_product_cost": 39000,
+        "currency": "IDR"
+      }
+    }
+  ]
+}

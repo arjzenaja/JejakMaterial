@@ -6,8 +6,7 @@ import { MetricCard } from '@/components/data-display/MetricCard';
 import { DateRangeFilter } from '@/components/forms/DateRangeFilter';
 import { LoadingState } from '@/components/data-display/LoadingState';
 import { ErrorState } from '@/components/data-display/ErrorState';
-import { dashboardApi } from '@/lib/api/endpoints/dashboard';
-import { movementApi } from '@/lib/api/endpoints/movements';
+import { dashboardApi, movementApi } from '@/lib/dummy';
 import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { formatDate, getMovementTypeLabel } from '@/lib/utils';
 import { TrendLineChart } from '@/components/data-display/TrendLineChart';
@@ -39,59 +38,9 @@ export default function DashboardPage() {
     setError(null);
     try {
       const [sumRes, trendRes, movRes] = await Promise.all([
-        dashboardApi.summary().catch(() => ({
-          success: true,
-          data: {
-            total_materials: { value: 3, active: 3, unit: 'item' },
-            movements_today: { value: 4, unit: 'transaksi' },
-            active_production: { value: 2, unit: 'batch' },
-            total_movements: { value: 12, unit: 'transaksi' },
-            low_stock_materials: 0,
-          },
-        })),
-        dashboardApi.trends({ days: 7 }).catch(() => ({
-          success: true,
-          data: {
-            trends: [
-              { date: '13 Nov', movements: 2 },
-              { date: '14 Nov', movements: 5 },
-              { date: '15 Nov', movements: 3 },
-              { date: '16 Nov', movements: 6 },
-              { date: '17 Nov', movements: 4 },
-              { date: '18 Nov', movements: 8 },
-              { date: '19 Nov', movements: 7 },
-            ],
-          },
-        })),
-        movementApi.list({ per_page: 5 }).catch(() => ({
-          success: true,
-          data: [
-            {
-              id: 1,
-              movement_number: 'MOV-20261118-A01',
-              movement_type: 'receipt',
-              movement_date: '2026-11-18T09:00:00Z',
-              status: 'posted',
-              lines: [{ material: { name: 'Bahan Baku A', code: 'BB-001' }, quantity: 125, unit: { symbol: 'kg' } }],
-            },
-            {
-              id: 2,
-              movement_number: 'MOV-20261118-A02',
-              movement_type: 'issue',
-              movement_date: '2026-11-18T11:30:00Z',
-              status: 'posted',
-              lines: [{ material: { name: 'Bahan Baku B', code: 'BB-002' }, quantity: 50, unit: { symbol: 'L' } }],
-            },
-            {
-              id: 3,
-              movement_number: 'MOV-20261119-A03',
-              movement_type: 'receipt',
-              movement_date: '2026-11-19T08:15:00Z',
-              status: 'draft',
-              lines: [{ material: { name: 'Bahan Baku A', code: 'BB-001' }, quantity: 200, unit: { symbol: 'kg' } }],
-            },
-          ],
-        })),
+        dashboardApi.summary(),
+        dashboardApi.trends({ days: 7 }),
+        movementApi.list({ per_page: 5 }),
       ]);
 
       if (sumRes.data) setSummary(sumRes.data);

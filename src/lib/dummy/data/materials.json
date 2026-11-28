@@ -1,0 +1,89 @@
+{
+  "materials": [
+    {
+      "id": 1,
+      "code": "BB-001",
+      "name": "Bahan Baku A (Minyak Nabati)",
+      "description": "Minyak nabati murni sebagai bahan baku utama formulasi produk.",
+      "is_active": true,
+      "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true },
+      "category_id": 1,
+      "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+      "base_unit_id": 1,
+      "organization_id": 1
+    },
+    {
+      "id": 2,
+      "code": "BB-002",
+      "name": "Bahan Baku B (Cairan Pelarut)",
+      "description": "Pelarut kimiawi kelas industri untuk proses formulasi.",
+      "is_active": true,
+      "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true },
+      "category_id": 1,
+      "base_unit": { "id": 2, "code": "liter", "name": "Liter", "symbol": "L" },
+      "base_unit_id": 2,
+      "organization_id": 1
+    },
+    {
+      "id": 3,
+      "code": "PJ-001",
+      "name": "Produk Alpha (Kemasan 1L)",
+      "description": "Produk jadi utama siap distribusi dalam kemasan standar 1 liter.",
+      "is_active": true,
+      "category": { "id": 2, "name": "Produk Jadi", "code": "PJ", "is_active": true },
+      "category_id": 2,
+      "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+      "base_unit_id": 1,
+      "organization_id": 1
+    },
+    {
+      "id": 4,
+      "code": "PK-001",
+      "name": "Kemasan Botol HDPE 1L",
+      "description": "Botol plastik HDPE kapasitas 1 liter untuk packaging produk.",
+      "is_active": true,
+      "category": { "id": 3, "name": "Kemasan", "code": "PK", "is_active": true },
+      "category_id": 3,
+      "base_unit": { "id": 3, "code": "pcs", "name": "Pieces", "symbol": "pcs" },
+      "base_unit_id": 3,
+      "organization_id": 1
+    },
+    {
+      "id": 5,
+      "code": "BB-003",
+      "name": "Bahan Aditif C (Stabilizer)",
+      "description": "Zat aditif stabilizer untuk menjaga kualitas dan shelf life produk.",
+      "is_active": true,
+      "category": { "id": 1, "name": "Bahan Baku", "code": "BB", "is_active": true },
+      "category_id": 1,
+      "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+      "base_unit_id": 1,
+      "organization_id": 1
+    },
+    {
+      "id": 6,
+      "code": "WS-001",
+      "name": "Limbah Sludge Pengadukan",
+      "description": "Residu sludge hasil proses pengadukan formulasi (bahan negative product).",
+      "is_active": false,
+      "category": { "id": 4, "name": "Limbah", "code": "WS", "is_active": true },
+      "category_id": 4,
+      "base_unit": { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg" },
+      "base_unit_id": 1,
+      "organization_id": 1
+    }
+  ],
+  "categories": [
+    { "id": 1, "name": "Bahan Baku", "code": "BB", "description": "Bahan baku utama untuk proses produksi", "is_active": true },
+    { "id": 2, "name": "Produk Jadi", "code": "PJ", "description": "Produk yang sudah selesai diproduksi dan siap distribusi", "is_active": true },
+    { "id": 3, "name": "Kemasan", "code": "PK", "description": "Material kemasan dan packaging", "is_active": true },
+    { "id": 4, "name": "Limbah", "code": "WS", "description": "Material residu dan limbah produksi", "is_active": true }
+  ],
+  "units": [
+    { "id": 1, "code": "kg", "name": "Kilogram", "symbol": "kg", "dimension": "mass" },
+    { "id": 2, "code": "liter", "name": "Liter", "symbol": "L", "dimension": "volume" },
+    { "id": 3, "code": "pcs", "name": "Pieces", "symbol": "pcs", "dimension": "count" },
+    { "id": 4, "code": "ton", "name": "Ton", "symbol": "ton", "dimension": "mass" },
+    { "id": 5, "code": "gram", "name": "Gram", "symbol": "g", "dimension": "mass" }
+  ]
+}
