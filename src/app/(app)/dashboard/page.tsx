@@ -19,6 +19,10 @@ import {
   TrendingUp,
   Layers,
   Scale,
+  Lightbulb,
+  CheckCircle2,
+  ShieldCheck,
+  Activity,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -195,9 +199,12 @@ export default function DashboardPage() {
             {/* Status Quick Card */}
             <div className="rounded-card border border-border bg-surface p-5 shadow-xs flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-text-primary">
-                  Status Sistem & Kualitas Data
-                </h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <Activity className="h-4 w-4 text-brand-700 shrink-0" />
+                  <h3 className="text-sm font-semibold text-text-primary">
+                    Status Sistem & Kualitas Data
+                  </h3>
+                </div>
                 <span className="text-xs text-text-secondary">
                   Parameter kesiapan audit MFCA
                 </span>
@@ -205,45 +212,49 @@ export default function DashboardPage() {
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-between p-3 rounded-input bg-canvas border border-border">
                     <div className="flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-brand-700" />
+                      <Layers className="h-4 w-4 text-brand-700 shrink-0" />
                       <span className="text-xs font-medium text-text-primary">
                         Metode MFCA
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       v1-approved
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between p-3 rounded-input bg-canvas border border-border">
                     <div className="flex items-center gap-2">
-                      <Scale className="h-4 w-4 text-brand-700" />
+                      <Scale className="h-4 w-4 text-brand-700 shrink-0" />
                       <span className="text-xs font-medium text-text-primary">
                         Rekonsiliasi Saldo
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       Sinkron
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between p-3 rounded-input bg-canvas border border-border">
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
                       <span className="text-xs font-medium text-text-primary">
                         Stok Negatif
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-text-secondary bg-neutral-100 px-2 py-0.5 rounded-full border border-border">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50/80 px-2.5 py-0.5 rounded-full border border-emerald-200/80">
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       0 Ditemukan
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 p-3 rounded-input bg-brand-100 border border-emerald-200">
-                <span className="text-xs text-brand-950 font-medium">
-                  💡 Seluruh data KPI dihitung otomatis dari transaksi fisik gudang dan catatan produksi yang terotorisasi.
+              <div className="mt-4 p-3 rounded-input bg-brand-100/70 border border-emerald-200 flex items-start gap-2.5">
+                <Lightbulb className="h-4 w-4 text-brand-700 shrink-0 mt-0.5" />
+                <span className="text-xs text-brand-950 font-medium leading-relaxed">
+                  Seluruh data KPI dihitung otomatis dari transaksi fisik gudang dan catatan produksi yang terotorisasi.
                 </span>
               </div>
             </div>
