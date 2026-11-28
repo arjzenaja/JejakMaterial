@@ -124,7 +124,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const { hasPermission } = useAuth();
+  const { hasPermission, organization } = useAuth();
 
   return (
     <>
@@ -223,10 +223,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-semibold text-white truncate">
-                PT Manufaktur Maju
+                {organization?.name ?? 'Organisasi aktif'}
               </span>
               <span className="text-[10px] text-emerald-300/70 truncate">
-                Kode Tenant: DEMO
+                Kode Tenant: {organization?.code ?? '-'}
               </span>
             </div>
           </div>

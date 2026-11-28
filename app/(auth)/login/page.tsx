@@ -1,111 +1,105 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Layers, Lock, Mail, ArrowRight } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, Mail } from 'lucide-react';
+import { AuthFrame } from '@/components/auth/AuthFrame';
+import { FormField } from '@/components/forms/FormField';
+import { PasswordInput } from '@/components/forms/PasswordInput';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/forms/FormField';
 import { useAuth } from '@/lib/auth/context';
+import { DEMO_EMAIL, DEMO_PASSWORD } from '@/lib/auth/mock';
+import { loginSchema, resolveAuthenticatedPath, type LoginInput } from '@/lib/auth/schemas';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const [email, setEmail] = useState('admin@demo.com');
-  const [password, setPassword] = useState('password');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage(null);
-
+  const onSubmit = async (values: LoginInput) => {
+    setFormError(null);
     try {
-      await login(email, password);
-      router.push('/dashboard');
-    } catch (err: any) {
-      setErrorMessage(
-        err.message || 'Login gagal. Periksa kembali email dan kata sandi Anda.'
+      const user = await login(values.email, values.password);
+      router.push(resolveAuthenticatedPath(user));
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : 'Login gagal. Periksa kembali email dan kata sandi Anda.'
       );
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-canvas p-4">
-      <div className="w-full max-w-md rounded-card border border-border bg-surface p-8 shadow-xl">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-card bg-brand-700 text-white shadow-md mb-3">
-            <Layers className="h-6 w-6" />
+    <AuthFrame
+      title="Masuk ke ruang kerja"
+      description="Gunakan akun perusahaan untuk melanjutkan pencatatan material dan analisis MFCA."
+      error={formError}
+      footer={
+        <p>
+          Belum punya akun?{' '}
+          <Link href="/register" className="font-semibold text-brand-700 hover:text-brand-900">
+            Daftar
+          </Link>
+        </p>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <FormField label="Email" required error={errors.email?.message}>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
+            <Input
+              type="email"
+              autoComplete="email"
+              placeholder="nama@perusahaan.com"
+              className="pl-9"
+              error={!!errors.email}
+              {...register('email')}
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            JejakMaterial
-          </h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Sistem Manajemen Material & Analisis MFCA Manufaktur
-          </p>
+        </FormField>
+
+        <FormField label="Kata sandi" required error={errors.password?.message}>
+          <PasswordInput
+            autoComplete="current-password"
+            placeholder="Masukkan kata sandi"
+            error={!!errors.password}
+            {...register('password')}
+          />
+        </FormField>
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full bg-brand-900 shadow-sm hover:bg-brand-950"
+            isLoading={isSubmitting}
+          >
+            Masuk
+            {!isSubmitting && <ArrowRight className="h-4 w-4" />}
+          </Button>
         </div>
+      </form>
 
-        {/* Error Alert */}
-        {errorMessage && (
-          <div className="mt-6 rounded-input bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 font-medium">
-            {errorMessage}
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <FormField label="Email Perusahaan" required>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-text-secondary" />
-              <Input
-                type="email"
-                placeholder="nama@perusahaan.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-9"
-                required
-              />
-            </div>
-          </FormField>
-
-          <FormField label="Kata Sandi" required>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-text-secondary" />
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-9"
-                required
-              />
-            </div>
-          </FormField>
-
-          <div className="pt-2">
-            <Button
-              type="submit"
-              className="w-full h-11 text-base shadow-md"
-              isLoading={isLoading}
-            >
-              Masuk ke Aplikasi
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </form>
-
-        {/* Demo Credential Notice */}
-        <div className="mt-6 border-t border-border pt-4 text-center">
-          <span className="text-xs text-text-secondary">
-            Kredensial Demo: <strong className="text-brand-700 font-medium">admin@demo.com</strong> / <strong className="text-brand-700 font-medium">password</strong>
-          </span>
-        </div>
-      </div>
-    </div>
+      <p className="mt-4 text-center text-xs text-text-secondary">
+        Akun demo:{' '}
+        <span className="font-medium text-brand-900">{DEMO_EMAIL}</span>
+        {' / '}
+        <span className="font-medium text-brand-900">{DEMO_PASSWORD}</span>
+      </p>
+    </AuthFrame>
   );
 }
