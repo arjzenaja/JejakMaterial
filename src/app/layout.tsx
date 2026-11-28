@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import SplashScreen from './SplashScreen';
 
 export const metadata: Metadata = {
   title: "JejakMaterial — SaaS Pelacak Material, Limbah, dan MFCA",
@@ -22,9 +23,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased bg-canvas text-text-primary min-h-screen font-sans">
-        <Providers>{children}</Providers>
-      </body>
+        <body className="antialiased bg-canvas text-text-primary min-h-screen font-sans">
+          <Providers>
+            <SplashScreen />
+            {children}
+          </Providers>
+        </body>
     </html>
   );
 }
