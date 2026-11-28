@@ -1,2 +1,3 @@
-// Barrel export for reusable primitive UI components (buttons, inputs, dialogs, badges)
-export {};
+export * from './Button';
+export * from './Input';
+export * from './Badge';

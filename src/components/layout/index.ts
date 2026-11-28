@@ -1,2 +1,3 @@
-// Barrel export for layout components (AppShell, Sidebar, Topbar, Breadcrumbs)
-export {};
+export * from './AppShell';
+export * from './Sidebar';
+export * from './Topbar';
