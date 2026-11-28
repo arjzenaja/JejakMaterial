@@ -94,12 +94,6 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
-
-      <p className="mt-4 rounded-lg border border-dashed border-border px-3 py-2 text-center text-xs text-text-secondary">
-        Akun demo: <span className="font-medium text-brand-900">{DEMO_EMAIL}</span>
-        {' / '}
-        <span className="font-medium text-brand-900">{DEMO_PASSWORD}</span>
-      </p>
     </AuthSplit>
   );
 }
