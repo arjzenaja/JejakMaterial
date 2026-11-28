@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Mail, UserRound } from 'lucide-react';
-import { AuthFrame } from '@/components/auth/AuthFrame';
+import { AuthSplit } from '@/components/auth/AuthSplit'
 import { FormField } from '@/components/forms/FormField';
 import { PasswordInput } from '@/components/forms/PasswordInput';
 import { Button } from '@/components/ui/Button';
@@ -25,12 +25,7 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
 
   const onSubmit = async (values: RegisterInput) => {
@@ -50,7 +45,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthFrame
+    <AuthSplit
+      variant="register"
       title="Daftar akun"
       description="Isi data akun pengguna. Organisasi perusahaan dibuat pada langkah berikutnya."
       error={formError}
@@ -126,6 +122,6 @@ export default function RegisterPage() {
           </Button>
         </div>
       </form>
-    </AuthFrame>
+    </AuthSplit>
   );
 }

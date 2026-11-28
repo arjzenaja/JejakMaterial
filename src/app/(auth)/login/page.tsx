@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Mail } from 'lucide-react';
-import { AuthFrame } from '@/components/auth/AuthFrame';
+import { AuthSplit } from '@/components/auth/AuthSplit';
 import { FormField } from '@/components/forms/FormField';
 import { PasswordInput } from '@/components/forms/PasswordInput';
 import { Button } from '@/components/ui/Button';
@@ -44,7 +44,8 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthFrame
+    <AuthSplit
+      variant="login"
       title="Masuk ke ruang kerja"
       description="Gunakan akun perusahaan untuk melanjutkan pencatatan material dan analisis MFCA."
       error={formError}
@@ -93,13 +94,6 @@ export default function LoginPage() {
           </Button>
         </div>
       </form>
-
-      <p className="mt-4 text-center text-xs text-text-secondary">
-        Akun demo:{' '}
-        <span className="font-medium text-brand-900">{DEMO_EMAIL}</span>
-        {' / '}
-        <span className="font-medium text-brand-900">{DEMO_PASSWORD}</span>
-      </p>
-    </AuthFrame>
+    </AuthSplit>
   );
 }
