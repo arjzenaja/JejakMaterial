@@ -62,3 +62,9 @@ export const flowEntrySchema = z.object({
 export const createFlowsSchema = z.object({
   entries: z.array(flowEntrySchema).min(1),
 });
+
+// shortcut: from/to optional (defaults handled in service); upgrade to required when time-range is enforced by policy
+export const periodSchema = z.object({
+  from: z.string().date().optional(),
+  to: z.string().date().optional(),
+});
