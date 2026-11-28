@@ -1,20 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function SplashScreen() {
-  // Status awal 'checking' membuat layar putih polos langsung muncul dari server
-  // sehingga halaman di belakangnya tertutup rapat dan bebas error hydration
   const [status, setStatus] = useState<'checking' | 'playing' | 'fading' | 'hidden'>('checking');
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const hasSeenSplash = window.sessionStorage.getItem('hasSeenSplash');
 
     if (hasSeenSplash) {
-      // Jika sudah pernah dilihat di sesi ini, langsung hilangkan tanpa animasi
       setStatus('hidden');
     } else {
-      // Jika belum pernah, tandai sudah dilihat dan mulai putar video
       window.sessionStorage.setItem('hasSeenSplash', 'true');
       setStatus('playing');
 
@@ -26,6 +23,22 @@ export default function SplashScreen() {
       return () => window.clearTimeout(fallback);
     }
   }, []);
+
+  // Pengaman tambahan khusus Safari untuk memaksa play() via useRef
+  useEffect(() => {
+    if (status === 'playing' && videoRef.current) {
+      const video = videoRef.current;
+      video.muted = true;
+      
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Jika browser memblokir total, langsung fade out ke halaman utama
+          setStatus('fading');
+        });
+      }
+    }
+  }, [status]);
 
   const handleVideoEnd = () => {
     setStatus('fading');
@@ -47,17 +60,19 @@ export default function SplashScreen() {
       }`}
     >
       {status !== 'checking' && (
-        <video
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          onEnded={handleVideoEnd}
-          onError={handleVideoEnd}
-          className="w-full max-w-3xl h-auto object-contain"
-        >
-          <source src="/videos/intro.mp4" type="video/mp4" />
-        </video>
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        onEnded={handleVideoEnd}
+        onError={handleVideoEnd}
+        className="w-full max-w-3xl h-auto object-contain"
+      >
+        <source src="/videos/intro.mp4" type="video/mp4" />
+      </video>
       )}
     </div>
   );
